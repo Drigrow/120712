@@ -448,11 +448,11 @@ pre {
 
 .hero-inner {
   flex: 1;
-  max-width: 1300px;
+  width: min(1300px, 100%);
   margin: 0 auto;
   padding: 28px 4vw 24px;
   display: grid;
-  grid-template-columns: 1fr 440px;
+  grid-template-columns: minmax(0, 1fr) 440px;
   gap: 48px;
   align-items: center;
   position: relative;
