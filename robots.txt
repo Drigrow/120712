@@ -1,0 +1,78 @@
+# ═══════════════════════════════════════════════
+# 120712.com · 洛天依 Luo Tianyi Fan Page
+# robots.txt
+# ═══════════════════════════════════════════════
+
+# Allow major search engines
+User-agent: Googlebot
+Allow: /
+Disallow: /backup/
+Disallow: /music/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /backup/
+Disallow: /music/
+
+User-agent: Baiduspider
+Allow: /
+Disallow: /backup/
+Disallow: /music/
+
+User-agent: Sogou web spider
+Allow: /
+Disallow: /backup/
+Disallow: /music/
+
+User-agent: Yandex
+Allow: /
+Disallow: /backup/
+Disallow: /music/
+
+# Block AI training crawlers
+# (Cloudflare handles most of these, but belt-and-suspenders)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# Default rule for all other bots
+User-agent: *
+Allow: /
+Disallow: /backup/
+Disallow: /music/
+Disallow: /*.py$
+
+# Sitemap
+Sitemap: https://120712.com/sitemap.xml
