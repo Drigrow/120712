@@ -97,7 +97,7 @@ The music player reads `music/index.json` — **no directory listing (`autoindex
 This project is a **non-commercial fan work** and is released under **[CC BY-NC-SA 4.0](LICENSE)**.
 
 ### Character & IP
-- **洛天依 (Luo Tianyi)** is a VOCALOID™ character developed by **上海禾念信息科技 (Shanghai Henian Information Technology)** in collaboration with Yamaha Bplats. All character rights belong to their respective owners.
+- **洛天依 (Luo Tianyi)** is a VOCALOID™ character developed by **上海禾念信息科技 (Shanghai Henian Information Technology)**. All character rights belong to their respective owners.
 - This site is an unofficial fan tribute and is **not affiliated with Shanghai Henian or Yamaha**.
 
 ### Text Content

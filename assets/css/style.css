@@ -1555,19 +1555,43 @@ pre {
 }
 
 /* ════════════ RESPONSIVE ════════════ */
+
+/* ── Tablet / small laptop (≤1024px) ── */
 @media (max-width: 1024px) {
   .hero-inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    /* minmax(0) prevents min-content blowout */
+    gap: 28px;
+    padding: 20px 5vw 16px;
   }
 
   .hero-char-col {
     order: -1;
-    max-width: 380px;
+    max-width: 340px;
+    width: 100%;
     margin: 0 auto;
+    justify-self: center;
   }
 
   .hero-text-col {
     text-align: center;
+    min-width: 0;
+    /* allow grid to shrink this cell */
+    overflow: hidden;
+    /* clip any content that still overflows (ASCII art etc.) */
+    width: 100%;
+  }
+
+  .hud-frame {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    /* stop wide HUD pre from inflating the column */
+  }
+
+  .hud-ascii {
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .hero-tagline {
@@ -1576,18 +1600,9 @@ pre {
     padding: 10px 0 0;
   }
 
-  .hero-overline {
-    justify-content: center;
-  }
-
-  .hero-tags {
-    justify-content: center;
-  }
-
-  .hero-btns {
-    justify-content: center;
-  }
-
+  .hero-overline,
+  .hero-tags,
+  .hero-btns,
   .hero-stat-strip {
     justify-content: center;
   }
@@ -1611,9 +1626,17 @@ pre {
   .ascii-corner {
     display: none;
   }
+
+  .section-dark,
+  .section-mid {
+    padding: 44px 5vw;
+  }
 }
 
+/* ── Mobile (≤768px) ── */
 @media (max-width: 768px) {
+
+  /* Navbar */
   .nav-links {
     display: none;
   }
@@ -1622,10 +1645,139 @@ pre {
     display: flex;
   }
 
+  .navbar {
+    padding: 10px 5vw;
+  }
+
+  /* Loader */
+  .loader-ascii {
+    font-size: 0.45rem;
+  }
+
+  /* Hero */
+  .hero-section {
+    min-height: auto;
+    padding-top: 48px;
+  }
+
+  .hero-inner {
+    padding: 16px 5vw 12px;
+    gap: 20px;
+  }
+
+  .hero-char-col {
+    max-width: 280px;
+  }
+
+  .hero-kanji {
+    font-size: clamp(2.4rem, 12vw, 3.8rem);
+  }
+
+  .hero-romaji {
+    font-size: clamp(0.75rem, 3.5vw, 1rem);
+    letter-spacing: 0.2em;
+  }
+
+  .hero-tags {
+    gap: 6px;
+  }
+
+  .htag {
+    font-size: 0.62rem;
+    padding: 2px 7px;
+  }
+
+  /* Section headers — keep inline-block so parent text-align:center works */
+  .sec-header {
+    margin-bottom: 28px;
+    overflow-x: auto;
+    /* scroll if still too wide on tiny screens */
+    padding-bottom: 2px;
+    /* prevent clipping scrollbar */
+  }
+
+  .sec-ascii {
+    font-size: 0.62rem;
+    /* keep display: inline-block (from base style) so centering works */
+  }
+
+  /* Sections */
+  .section-dark,
+  .section-mid {
+    padding: 36px 4vw;
+  }
+
+  /* ASCII cards — shrink header/footer text */
+  .ac-header,
+  .ac-footer {
+    font-size: 0.58rem;
+    padding: 3px 8px;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  .ac-body {
+    padding: 12px 14px;
+  }
+
+  /* Profile table */
+  .atl {
+    font-size: 0.74rem;
+    padding: 6px 8px;
+    white-space: normal;
+  }
+
+  .atv {
+    font-size: 0.78rem;
+  }
+
+  /* Lore grid */
+  .lore-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Music: voicebank + image stack */
+  .music-top-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Music player controls */
+  .pb-controls {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pb-btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+
+  .pb-play {
+    padding: 4px 12px;
+  }
+
+  .pb-time {
+    font-size: 0.62rem;
+  }
+
+  .song-item {
+    padding: 10px 10px;
+    gap: 8px;
+  }
+
+  .swave {
+    display: none;
+    /* hide mini waveform on small screens to save space */
+  }
+
+  /* Albums grid */
   .albums-grid {
     grid-template-columns: 1fr;
   }
 
+  /* Timeline */
   .tl-item {
     grid-template-columns: 1fr;
   }
@@ -1633,7 +1785,7 @@ pre {
   .tl-rail {
     border-right: none;
     border-bottom: 1px solid var(--border-dim);
-    padding: 12px 0;
+    padding: 10px 0;
   }
 
   .tl-rail::before {
@@ -1649,23 +1801,69 @@ pre {
   }
 
   .tl-content {
-    padding: 12px 0 0;
+    padding: 10px 0 0;
   }
 
+  /* Lore etymology */
   .etym-inner {
     flex-direction: column;
     align-items: center;
+    padding: 16px 12px;
   }
 
   .etym-op {
     transform: rotate(90deg);
   }
+
+  .etym-char,
+  .etym-full {
+    font-size: 2rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 30px 5vw 24px;
+  }
+
+  .footer-links {
+    gap: 12px;
+  }
+
+  .footer-links a {
+    font-size: 0.7rem;
+  }
+
+  /* Scrollbar thinner on mobile */
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
 }
 
+/* ── Small phones (≤480px) ── */
 @media (max-width: 480px) {
+
+  /* Navbar logo — shrink to fit */
+  .logo-name-zh {
+    font-size: 0.9rem;
+  }
+
+  .logo-name-en {
+    display: none;
+  }
+
+  /* Hero */
+  .hero-inner {
+    padding: 12px 4vw 10px;
+  }
+
+  .hero-char-col {
+    max-width: 240px;
+  }
+
   .hero-btns {
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
 
   .btn-pri,
@@ -1675,13 +1873,134 @@ pre {
   }
 
   .hero-stat-strip {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     gap: 6px;
   }
 
+  /* HUD box — allow it to shrink and wrap */
+  .hud-ascii {
+    font-size: 0.65rem;
+    line-height: 1.4;
+  }
+
+  /* Section headers */
+  .sec-ascii {
+    font-size: 0.55rem;
+  }
+
+  .sec-sub {
+    font-size: 0.65rem;
+  }
+
+  /* Cards */
   .ac-header,
   .ac-footer {
+    font-size: 0.52rem;
+  }
+
+  .ac-body {
+    padding: 10px 12px;
+  }
+
+  .ac-body p {
+    font-size: 0.82rem;
+  }
+
+  /* Music player bar */
+  .player-bar {
+    padding: 8px 12px 6px;
+  }
+
+  .pb-top {
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+
+  .pb-title {
+    font-size: 0.8rem;
+  }
+
+  .pb-artist {
+    font-size: 0.65rem;
+  }
+
+  .pb-controls {
+    gap: 5px;
+  }
+
+  .pb-vol-wrap {
+    gap: 5px;
+  }
+
+  .pb-wave {
     font-size: 0.6rem;
+  }
+
+  /* Trait tags */
+  .trait {
+    font-size: 0.68rem;
+    padding: 3px 9px;
+  }
+
+  /* Voicebank row */
+  .vb-row-item {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .vb-year {
+    min-width: unset;
+  }
+
+  /* Timeline */
+  .tl-item {
+    margin-bottom: 16px;
+  }
+
+  /* Footer */
+  .footer-disc {
+    font-size: 0.65rem;
+  }
+
+  .footer-ascii {
+    font-size: 0.68rem;
+  }
+}
+
+/* ── Tiny phones (≤380px) ── */
+@media (max-width: 380px) {
+  .hero-kanji {
+    font-size: 2.2rem;
+  }
+
+  .hero-char-col {
+    max-width: 200px;
+  }
+
+  .htag {
+    font-size: 0.55rem;
+    padding: 2px 5px;
+  }
+
+  .sec-ascii {
+    font-size: 0.48rem;
+  }
+
+  .hud-ascii {
+    font-size: 0.58rem;
+  }
+
+  .song-item {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .stitle {
+    font-size: 0.8rem;
+  }
+
+  .footer-links {
+    gap: 8px;
   }
 }
 
