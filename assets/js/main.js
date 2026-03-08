@@ -401,3 +401,88 @@ function stopWaveAnim() {
     header.textContent = `┌─── [ LOCAL_MUSIC · 本地曲目 · ${playlist.length} tracks ] ` + '─'.repeat(Math.max(0, 42 - String(playlist.length).length)) + '┐';
   }
 })();
+
+/* ════════════════════════════════════════════════
+   BIRTHDAY COUNTDOWN — Luo Tianyi (洛天依) · 07/12
+   ════════════════════════════════════════════════ */
+(function initBirthdayCountdown() {
+  const BIRTH_YEAR = 2012;   // Tianyi's launch year
+  const BD_MONTH = 7;      // July (1-indexed)
+  const BD_DAY = 12;
+
+  /* Ordinal suffix: 1st, 2nd, 3rd, 14th … */
+  function ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
+  /* Two-digit pad */
+  const pad = n => String(n).padStart(2, '0');
+
+  /* Compute next birthday (UTC+8) and age */
+  function getNextBirthday() {
+    // Current local time in UTC+8
+    const nowUtc = Date.now();
+    const utc8Now = new Date(nowUtc + 8 * 3600 * 1000); // shift to UTC+8
+
+    const y = utc8Now.getUTCFullYear();
+    const m = utc8Now.getUTCMonth() + 1;
+    const d = utc8Now.getUTCDate();
+
+    // Is today already past July 12 this year?
+    let bdYear = y;
+    if (m > BD_MONTH || (m === BD_MONTH && d > BD_DAY)) {
+      bdYear = y + 1;
+    }
+
+    // Midnight UTC+8 on July 12 of bdYear  →  subtract 8h to get UTC epoch
+    const bdUtc8Midnight = Date.UTC(bdYear, BD_MONTH - 1, BD_DAY) - 8 * 3600 * 1000;
+    const msLeft = bdUtc8Midnight - nowUtc;
+
+    const isBirthday = (m === BD_MONTH && d === BD_DAY);
+    const age = bdYear - BIRTH_YEAR;
+
+    return { msLeft, isBirthday, age };
+  }
+
+  function tick() {
+    const { msLeft, isBirthday, age } = getNextBirthday();
+
+    if (isBirthday) {
+      // ── Birthday card mode ──
+      document.getElementById('bdCountdown').style.display = 'none';
+      const card = document.getElementById('bdCard');
+      card.style.display = 'flex';
+      document.getElementById('bdWishZh').textContent =
+        `生日快乐，洛天依！✨ 第${age}个生日快乐 · 愿歌声永远回响`;
+      document.getElementById('bdWishEn').textContent =
+        `Happy ${ordinal(age)} Birthday, Luo Tianyi! ✨ May your song always resonate`;
+    } else {
+      // ── Countdown mode ──
+      document.getElementById('bdCard').style.display = 'none';
+      document.getElementById('bdCountdown').style.display = 'flex';
+
+      const totalSec = Math.max(0, Math.floor(msLeft / 1000));
+      const d = Math.floor(totalSec / 86400);
+      const h = Math.floor((totalSec % 86400) / 3600);
+      const mi = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+
+      document.getElementById('bdDays').textContent = d;
+      document.getElementById('bdHours').textContent = pad(h);
+      document.getElementById('bdMins').textContent = pad(mi);
+      document.getElementById('bdSecs').textContent = pad(s);
+
+      // Age label in both languages
+      document.getElementById('bdTargetZh').textContent =
+        `至第${age}个生日 · 07/12`;
+      document.getElementById('bdTargetEn').textContent =
+        `until ${ordinal(age)} Birthday · 07/12`;
+    }
+  }
+
+  // Run immediately, then every second
+  tick();
+  setInterval(tick, 1000);
+})();

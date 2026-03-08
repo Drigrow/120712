@@ -1549,7 +1549,197 @@ pre {
   opacity: 0.4;
 }
 
+/* ════════════ BIRTHDAY COUNTDOWN STRIP ════════════ */
+.bd-strip {
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  background: rgba(102, 204, 255, 0.03);
+  padding: 8px 4vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle sweeping glow across the strip */
+.bd-strip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 204, 255, 0.06), transparent);
+  animation: bd-sweep 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes bd-sweep {
+  0% {
+    left: -60%;
+  }
+
+  60%,
+  100% {
+    left: 120%;
+  }
+}
+
+/* Countdown row */
+.bd-countdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.bd-icon {
+  color: var(--blue);
+  font-size: 0.65rem;
+  animation: blink-now 2s step-end infinite;
+}
+
+.bd-label {
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+}
+
+.bd-sep {
+  color: var(--blue-dim);
+  opacity: 0.5;
+  font-size: 0.6rem;
+}
+
+/* Time units row */
+.bd-units {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bd-unit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+.bd-unit>span:first-child {
+  /* the number */
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--blue);
+  text-shadow: var(--glow-sm);
+  min-width: 1.8ch;
+  text-align: right;
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+.bd-uname {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
+
+.bd-dot {
+  color: var(--blue-dim);
+  opacity: 0.4;
+  font-size: 0.6rem;
+}
+
+.bd-target {
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+
+/* Birthday card mode */
+.bd-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  animation: bd-glow-pulse 2s ease-in-out infinite alternate;
+}
+
+.bd-cake {
+  font-size: 1.1rem;
+  animation: bd-bounce 1s ease-in-out infinite alternate;
+}
+
+@keyframes bd-bounce {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-4px);
+  }
+}
+
+.bd-wish {
+  color: var(--blue);
+  text-shadow: var(--glow-sm);
+  letter-spacing: 0.04em;
+}
+
+@keyframes bd-glow-pulse {
+  from {
+    text-shadow: 0 0 8px rgba(102, 204, 255, 0.3);
+  }
+
+  to {
+    text-shadow: 0 0 20px rgba(102, 204, 255, 0.7), 0 0 40px rgba(102, 204, 255, 0.3);
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .bd-strip {
+    padding: 7px 4vw;
+  }
+
+  .bd-countdown {
+    gap: 6px;
+    font-size: 0.68rem;
+  }
+
+  .bd-unit>span:first-child {
+    font-size: 0.82rem;
+    min-width: 1.6ch;
+  }
+
+  .bd-target {
+    font-size: 0.6rem;
+  }
+
+  .bd-sep {
+    display: none;
+    /* hide decorative dashes on mobile to save space */
+  }
+}
+
+@media (max-width: 480px) {
+  .bd-label {
+    display: none;
+    /* label redundant on tiny screens */
+  }
+
+  .bd-wish {
+    font-size: 0.72rem;
+  }
+}
+
 /* ════════════ SCROLLBAR ════════════ */
+
 ::-webkit-scrollbar {
   width: 5px;
 }

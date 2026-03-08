@@ -244,6 +244,46 @@
         </div>
       </div>
 
+      <!-- ════ BIRTHDAY COUNTDOWN STRIP ════ -->
+      <div class="bd-strip mono" id="bdStrip" aria-live="polite">
+        <!-- Normal countdown mode -->
+        <div class="bd-countdown" id="bdCountdown">
+          <span class="bd-icon">◉</span>
+          <span class="bd-label">
+            <span class="zh" id="bdLabelZh">生日倒计时</span>
+            <span class="en" id="bdLabelEn">BIRTHDAY_COUNTDOWN</span>
+          </span>
+          <span class="bd-sep">──</span>
+          <span class="bd-units" id="bdUnits">
+            <span class="bd-unit"><span id="bdDays">--</span><span class="bd-uname zh">天</span><span
+                class="bd-uname en">d</span></span>
+            <span class="bd-dot">·</span>
+            <span class="bd-unit"><span id="bdHours">--</span><span class="bd-uname zh">时</span><span
+                class="bd-uname en">h</span></span>
+            <span class="bd-dot">·</span>
+            <span class="bd-unit"><span id="bdMins">--</span><span class="bd-uname zh">分</span><span
+                class="bd-uname en">m</span></span>
+            <span class="bd-dot">·</span>
+            <span class="bd-unit"><span id="bdSecs">--</span><span class="bd-uname zh">秒</span><span
+                class="bd-uname en">s</span></span>
+          </span>
+          <span class="bd-sep">──</span>
+          <span class="bd-target">
+            <span class="zh" id="bdTargetZh">至第--个生日 · 07/12</span>
+            <span class="en" id="bdTargetEn">until --th Birthday · 07/12</span>
+          </span>
+        </div>
+        <!-- Birthday card mode (July 12 only) -->
+        <div class="bd-card" id="bdCard" style="display:none">
+          <span class="bd-cake">🎂</span>
+          <span class="bd-wish">
+            <span class="zh" id="bdWishZh">生日快乐，洛天依！✨ 愿歌声永远回响 · 第--个生日快乐</span>
+            <span class="en" id="bdWishEn">Happy --th Birthday, Luo Tianyi! ✨ May your song always resonate</span>
+          </span>
+          <span class="bd-cake">🎂</span>
+        </div>
+      </div>
+
       <!-- ASCII bottom strip -->
       <div class="ascii-banner-bot" aria-hidden="true">
         <span class="mono">◆══[ ♪ 华风夏韵 · 洛水天依 · Music From Heaven · Resonating Every Heart ♪ ]══◆</span>
