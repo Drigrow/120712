@@ -448,6 +448,7 @@ pre {
   white-space: nowrap;
   overflow: hidden;
   letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .ascii-banner-top {
@@ -2543,4 +2544,14 @@ pre {
   font-size: 0.68rem;
   color: var(--text-dim);
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .banner-long {
+    display: none;
+  }
+
+  .banner-short {
+    display: inline !important;
+  }
 }
