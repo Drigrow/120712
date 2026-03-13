@@ -86,6 +86,31 @@ http://localhost:8712
 
 The site is served as a static frontend. However, the Bilibili video feed requires a background Python service to keep the data fresh.
 
+### Linux Server Deployment
+1. **Install Prerequisites**:
+   ```bash
+   apt update
+   apt install python3 python3-pip python3-venv
+   ```
+2. **Install Dependencies**:
+   You have two options depending on your OS version:
+
+   **Option A: Virtual Environment (Recommended)**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+   *Note: If you use this, update your systemd `ExecStart` to point to `/path/to/venv/bin/python3`.*
+
+   **Option B: System Override (Quickest)**
+   ```bash
+   pip3 install -r requirements.txt --break-system-packages
+   ```
+
+3. **Configure Services**:
+   Follow the systemd instructions below to set up the web server and crawler as background services.
+
 ### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt

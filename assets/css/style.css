@@ -817,17 +817,15 @@ pre {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: var(--blue-dim);
+  color: var(--text-dim);
+  margin-top: 8px;
+  letter-spacing: 0.06em;
   text-decoration: none;
-  letter-spacing: 0.08em;
-  margin-top: 14px;
-  transition: all var(--trans);
-  opacity: 0.7;
+  transition: color var(--trans), text-shadow var(--trans);
 }
 
 .return-link:hover {
   color: var(--blue);
-  opacity: 1;
   text-shadow: var(--glow-sm);
 }
 
