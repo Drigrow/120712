@@ -25,3 +25,9 @@ npm-debug.log*
 # Temp / scratch files
 index_clean.html
 backup/
+test_fetch*.py
+out.txt
+
+# Generated Project Data
+assets/data/updates.json
+assets/data/images/

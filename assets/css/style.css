@@ -812,6 +812,25 @@ pre {
   letter-spacing: 0.06em;
 }
 
+/* ── Return Link ── */
+.return-link {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--blue-dim);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  margin-top: 14px;
+  transition: all var(--trans);
+  opacity: 0.7;
+}
+
+.return-link:hover {
+  color: var(--blue);
+  opacity: 1;
+  text-shadow: var(--glow-sm);
+}
+
 /* ── ASCII Card ── */
 .ascii-card {
   border: 1px solid var(--border);

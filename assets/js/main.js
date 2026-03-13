@@ -5,19 +5,29 @@
 
 /* ─────────── Loader ─────────── */
 const loader = document.getElementById('loader');
-const loaderBar = document.getElementById('loaderBar');
+if (loader) {
+  // Skip loader if arriving from another page within the same site
+  const isInternal = document.referrer && document.referrer.includes(window.location.host);
 
-let pct = 0;
-const barInterval = setInterval(() => {
-  pct += Math.random() * 18;
-  if (pct > 100) pct = 100;
-  loaderBar.style.width = pct + '%';
-  if (pct >= 100) clearInterval(barInterval);
-}, 100);
+  if (isInternal) {
+    loader.classList.add('hide');
+    loader.style.display = 'none'; // completely drop from flow
+  } else {
+    const loaderBar = document.getElementById('loaderBar');
+    let pct = 0;
+    const barInterval = setInterval(() => {
+      if (!loaderBar) return;
+      pct += Math.random() * 18;
+      if (pct > 100) pct = 100;
+      loaderBar.style.width = pct + '%';
+      if (pct >= 100) clearInterval(barInterval);
+    }, 100);
 
-const hideLoader = () => loader.classList.add('hide');
-window.addEventListener('load', () => setTimeout(hideLoader, 1400));
-setTimeout(hideLoader, 3500);
+    const hideLoader = () => loader.classList.add('hide');
+    window.addEventListener('load', () => setTimeout(hideLoader, 1400));
+    setTimeout(hideLoader, 3500);
+  }
+}
 
 /* ─────────── Language toggle ─────────── */
 const html = document.documentElement;

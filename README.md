@@ -13,29 +13,34 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 |---|---|
 | 🎌 Bilingual | Full Chinese / English toggle, stored in localStorage |
 | 🖥️ Futuristic ASCII UI | All decoration rendered with box-drawing characters |
+| 🎬 Bilibili Videos | Live updates of latest 10 videos via automated crawler |
 | 🎵 Local Music Player | Reads MP3s from `./music/`, parses `<title>-<artist>.mp3` filenames |
 | 📱 Responsive | Portrait (mobile) + Landscape (desktop) optimised layouts |
-| ⚡ Zero dependencies | No frameworks, no npm, just static files |
+| ⚡ Static Frontend | No frameworks, optimized for edge delivery |
 
 ---
 
 ## 🗂️ Project Structure
 
 ```
-120712.com/
-├── index.html                 # Main page
+├── index.html                 # Main landing page
+├── picture.html               # Image gallery / Databank
+├── updates.html               # Bilibili video updates feed
 ├── generate_music_list.py     # Script: rebuild music/index.json
 ├── music/
 │   ├── index.json             # Auto-generated track list
-│   └── *.mp3                  # Your local music files (not in .gitignore)
+│   └── *.mp3                  # Your local music files
+├── scripts/
+│   ├── crawler.py             # Scraper for Bilibili video metadata
+│   └── scheduler.py           # Hourly loop for the crawler
 ├── assets/
+│   ├── data/
+│   │   ├── updates.json       # Generated metadata for the video feed
+│   │   └── images/            # Downloaded video thumbnails
 │   ├── css/style.css
 │   ├── js/main.js
 │   └── images/
-│       ├── lt_main.png        # Main hero image
-│       ├── lt_v3.png          # V3 reference sheet
-│       └── lt_v5_3view.jpg    # V5 three-view reference
-└── .gitignore
+└── requirements.txt           # Python dependencies (requests, bilibili-api-python)
 ```
 
 ---
@@ -79,16 +84,30 @@ http://localhost:8712
 
 ---
 
-## 🖥️ Deployment (VPS)
+The site is served as a static frontend. However, the Bilibili video feed requires a background Python service to keep the data fresh.
 
-The site is fully static. Any web server can host it:
-
+### 1. Install Dependencies
 ```bash
-# On your VPS — just pull and the static server handles the rest
-git pull
+pip install -r requirements.txt
 ```
 
-The music player reads `music/index.json` — **no directory listing (`autoindex`) needed**. Works with any Nginx / Apache / Caddy configuration.
+### 2. Run the Web Server
+Use any static file server (e.g., Python's built-in module):
+```bash
+# Serves the site at http://localhost:8712
+python3 -m http.server 8712
+```
+
+### 3. Run the Hourly Crawler (Background)
+The crawler fetches the latest 10 videos from Bilibili every hour.
+```bash
+# Windows
+start /B pythonw scripts/scheduler.py
+
+# Linux
+nohup python3 scripts/scheduler.py > crawler.log 2>&1 &
+```
+
 
 ---
 

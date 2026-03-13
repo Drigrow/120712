@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>图库 - 洛天依 · Luo Tianyi Pictures</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .gallery-section {
+      padding: 100px 4vw 60px;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .gallery-item {
+      position: relative;
+      border: 1px solid var(--border-dim);
+      background: rgba(10, 16, 32, 0.5);
+      overflow: hidden;
+      border-radius: 4px;
+      transition: all var(--trans);
+    }
+    .gallery-item:hover {
+      border-color: var(--blue);
+      box-shadow: var(--glow);
+      transform: translateY(-4px);
+    }
+    .gallery-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .gallery-item:hover .gallery-img {
+      transform: scale(1.05);
+    }
+    .gallery-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(6, 12, 24, 0.85);
+      padding: 10px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border-dim);
+      backdrop-filter: blur(4px);
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ████ NAVBAR ████ -->
+  <nav class="navbar" id="navbar" aria-label="Main navigation">
+    <a href="index.html#hero" class="nav-logo">
+      <span class="logo-bracket">[ </span>
+      <span class="logo-name-zh">洛天依</span>
+      <span class="logo-name-en">·LTY·</span>
+      <span class="logo-bracket"> ]</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#profile" class="nav-link"><span class="nl-idx">01</span><span class="zh">档案</span><span class="en">Profile</span></a></li>
+      <li><a href="index.html#lore" class="nav-link"><span class="nl-idx">02</span><span class="zh">背景</span><span class="en">Lore</span></a></li>
+      <li><a href="index.html#music" class="nav-link"><span class="nl-idx">03</span><span class="zh">音乐</span><span class="en">Music</span></a></li>
+      <li><a href="index.html#timeline" class="nav-link"><span class="nl-idx">04</span><span class="zh">历程</span><span class="en">Timeline</span></a></li>
+      <li><a href="picture.html" class="nav-link active"><span class="nl-idx">05</span><span class="zh">图库</span><span class="en">Gallery</span></a></li>
+      <li><a href="updates.html" class="nav-link"><span class="nl-idx">06</span><span class="zh">动态</span><span class="en">Updates</span></a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" aria-label="切换语言">
+        <span class="lt-zh">中文</span><span class="lt-sep">/</span><span class="lt-en">EN</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#profile" onclick="closeMobMenu()"><span class="zh">01_档案</span><span class="en">01_Profile</span></a>
+    <a href="index.html#lore" onclick="closeMobMenu()"><span class="zh">02_背景</span><span class="en">02_Lore</span></a>
+    <a href="index.html#music" onclick="closeMobMenu()"><span class="zh">03_音乐</span><span class="en">03_Music</span></a>
+    <a href="index.html#timeline" onclick="closeMobMenu()"><span class="zh">04_历程</span><span class="en">04_Timeline</span></a>
+    <a href="picture.html"><span class="zh">05_图库</span><span class="en">05_Gallery</span></a>
+    <a href="updates.html"><span class="zh">06_动态</span><span class="en">06_Updates</span></a>
+  </div>
+
+  <main>
+    <section class="gallery-section">
+      <div class="sec-header">
+        <pre class="sec-ascii" aria-hidden="true">╔══════════════════════════════════════╗
+║  §05  图库档案 · Picture Library     ║
+╚══════════════════════════════════════╝</pre>
+        <a href="index.html" class="return-link">&lt;&lt; [ RETURN_TO_SYSTEM_ROOT ]</a>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid">
+        <div class="gallery-item">
+          <div style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background:var(--bg2);">
+            <span class="mono" style="color:var(--text-dim); opacity:0.5;">[ SCRAPING_LOCAL_DB_... ]</span>
+          </div>
+          <div class="gallery-label mono">Awaiting Signal</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    (async function fetchGallery() {
+      const grid = document.getElementById('galleryGrid');
+      
+      try {
+        const res = await fetch('assets/data/updates.json');
+        if (!res.ok) throw new Error('Data not found');
+        const data = await res.json();
+        
+        let allMedia = [];
+        let counter = 1;
+        
+        // Add hardcoded references first so the gallery isn't empty if scraper fails visually
+        allMedia.push({url: 'assets/images/lt_main.png', label: 'V3 Main', id: 'SYS_001', raw: true});
+        allMedia.push({url: 'assets/images/lt_v3.webp', label: 'V3 Concept', id: 'SYS_002', raw: true});
+        allMedia.push({url: 'assets/images/lt_v5_3view.jpg', label: 'V5 Turnaround', id: 'SYS_003', raw: true});
+
+        data.forEach(item => {
+            if (item.media && item.media.length > 0) {
+                item.media.forEach(m => {
+                    if (m.type === 'image') {
+                        allMedia.push({url: m.url, label: item.author + ' Update', id: 'CRAWL_' + String(counter).padStart(3, '0')});
+                        counter++;
+                    } else if (m.type === 'video') {
+                        allMedia.push({url: m.cover_url, label: 'Video Thumbnail', id: 'CRAWL_' + String(counter).padStart(3, '0')});
+                        counter++;
+                    }
+                });
+            }
+        });
+        
+        // Render
+        grid.innerHTML = '';
+        allMedia.forEach(m => {
+            let styling = m.raw ? 'style="object-fit: contain; background: #fff;"' : '';
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="gallery-item">
+                  <img src="${m.url}" alt="${m.id}" class="gallery-img" ${styling} loading="lazy">
+                  <div class="gallery-label mono">[ ${m.id} ] ${m.label}</div>
+                </div>
+            `);
+        });
+
+      } catch (err) {
+        console.error("Gallery fetch failed", err);
+        grid.innerHTML = `
+          <div class="gallery-item">
+            <div style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background:var(--bg2); color:var(--red)">
+              <span class="mono">[ FETCH_FAILED ]</span>
+            </div>
+            <div class="gallery-label mono">Error DB</div>
+          </div>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>
