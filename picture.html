@@ -152,7 +152,7 @@
         allMedia.forEach(m => {
             let styling = m.raw ? 'style="object-fit: contain; background: #fff;"' : '';
             grid.insertAdjacentHTML('beforeend', `
-                <div class="gallery-item">
+                <div class="gallery-item" onclick="openLightbox('${m.url}', '${m.label}', '${m.id}')">
                   <img src="${m.url}" alt="${m.id}" class="gallery-img" ${styling} loading="lazy">
                   <div class="gallery-label mono">[ ${m.id} ] ${m.label}</div>
                 </div>
@@ -171,6 +171,49 @@
         `;
       }
     })();
+
+    // ── Lightbox Logic ──
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxLabel = document.getElementById('lightboxLabel');
+    const lightboxId = document.getElementById('lightboxId');
+
+    function openLightbox(url, label, id) {
+        lightboxImg.src = url;
+        lightboxLabel.textContent = label;
+        lightboxId.textContent = `[ ${id} ]`;
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Stop scrolling
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+        setTimeout(() => { lightboxImg.src = ''; }, 350);
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
+    });
   </script>
+
+  <!-- ████ LIGHTBOX ████ -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+      <div class="lightbox-close" id="lightboxClose">[ CLOSE_X ]</div>
+      <img src="" alt="" class="lightbox-img" id="lightboxImg">
+      <div class="lightbox-info">
+        <span id="lightboxLabel"></span>
+        <span id="lightboxId"></span>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
