@@ -115,6 +115,18 @@
     </section>
   </main>
 
+  <!-- ████ LIGHTBOX ████ -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+      <div class="lightbox-close" id="lightboxClose">[ CLOSE_X ]</div>
+      <img src="" alt="" class="lightbox-img" id="lightboxImg">
+      <div class="lightbox-info">
+        <span id="lightboxLabel"></span>
+        <span id="lightboxId"></span>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/js/main.js"></script>
   <script>
     (async function fetchGallery() {
@@ -173,13 +185,25 @@
     })();
 
     // ── Lightbox Logic ──
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxClose = document.getElementById('lightboxClose');
-    const lightboxLabel = document.getElementById('lightboxLabel');
-    const lightboxId = document.getElementById('lightboxId');
+    let lightbox, lightboxImg, lightboxClose, lightboxLabel, lightboxId;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        lightbox = document.getElementById('lightbox');
+        lightboxImg = document.getElementById('lightboxImg');
+        lightboxClose = document.getElementById('lightboxClose');
+        lightboxLabel = document.getElementById('lightboxLabel');
+        lightboxId = document.getElementById('lightboxId');
+
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        if (lightbox) {
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+        }
+    });
 
     function openLightbox(url, label, id) {
+        if (!lightboxImg) return;
         lightboxImg.src = url;
         lightboxLabel.textContent = label;
         lightboxId.textContent = `[ ${id} ]`;
@@ -188,15 +212,11 @@
     }
 
     function closeLightbox() {
+        if (!lightbox) return;
         lightbox.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
         setTimeout(() => { lightboxImg.src = ''; }, 350);
     }
-
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
-    });
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
@@ -204,16 +224,6 @@
     });
   </script>
 
-  <!-- ████ LIGHTBOX ████ -->
-  <div class="lightbox" id="lightbox">
-    <div class="lightbox-content">
-      <div class="lightbox-close" id="lightboxClose">[ CLOSE_X ]</div>
-      <img src="" alt="" class="lightbox-img" id="lightboxImg">
-      <div class="lightbox-info">
-        <span id="lightboxLabel"></span>
-        <span id="lightboxId"></span>
-      </div>
-    </div>
-  </div>
+
 </body>
 </html>

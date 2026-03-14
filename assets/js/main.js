@@ -6,8 +6,21 @@
 /* ─────────── Loader ─────────── */
 const loader = document.getElementById('loader');
 if (loader) {
-  // Skip loader if arriving from another page within the same site
-  const isInternal = document.referrer && document.referrer.includes(window.location.host);
+  // More robust internal check: compare origins or hostnames
+  let isInternal = false;
+  try {
+    if (document.referrer) {
+      const refUrl = new URL(document.referrer);
+      const currUrl = new URL(window.location.href);
+      
+      // Check if origins match or if hostname is the same (ignoring port/protocol if needed)
+      isInternal = (refUrl.origin === currUrl.origin) || 
+                   (refUrl.hostname === currUrl.hostname);
+    }
+  } catch (e) {
+    // Basic string check if URL parsing fails
+    isInternal = document.referrer && document.referrer.includes(window.location.hostname);
+  }
 
   if (isInternal) {
     loader.classList.add('hide');
