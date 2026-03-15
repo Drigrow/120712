@@ -1186,6 +1186,11 @@ pre {
   gap: 20px;
 }
 
+/* Prevent grid children from overflowing on mobile (Android fix) */
+.music-top-row > * {
+  min-width: 0;
+}
+
 /* Voice bank list */
 .vb-list {
   display: flex;
@@ -1968,6 +1973,25 @@ pre {
   .music-top-row {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  /* V5 reference image — constrain to viewport width on Android */
+  .v5-ref {
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .v5-ref .ref-img-inner {
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .v5-ref .ref-img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
   }
 
   /* Music player controls */
