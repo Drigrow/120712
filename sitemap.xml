@@ -10,4 +10,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/?lang=en" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://120712.com/" />
   </url>
+  <url>
+    <loc>https://120712.com/updates.html</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://120712.com/picture.html</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
