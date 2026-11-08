@@ -36,9 +36,14 @@ if (loader) {
       if (pct >= 100) clearInterval(barInterval);
     }, 100);
 
-    const hideLoader = () => loader.classList.add('hide');
-    window.addEventListener('load', () => setTimeout(hideLoader, 1400));
-    setTimeout(hideLoader, 3500);
+    const hideLoader = () => {
+      clearInterval(barInterval);
+      loader.classList.add('hide');
+    };
+    const heroImage = document.querySelector('.char-img');
+    setTimeout(hideLoader, 1500);
+    if (heroImage?.decode) heroImage.decode().then(hideLoader, hideLoader);
+    else hideLoader();
   }
 }
 
