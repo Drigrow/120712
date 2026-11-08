@@ -44,13 +44,15 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 │   ├── data/
 │   │   ├── updates.json       # Generated metadata for the video feed
 │   │   └── images/            # Downloaded video thumbnails
-│   ├── css/style.css
-│   ├── js/main.js
+│   ├── css/style.v6.0.1.css
+│   ├── js/main.v6.0.1.js
 │   └── images/
 └── requirements.txt           # Python dependencies (requests, bilibili-api-python)
 ```
 
 ---
+
+The shared CSS and JavaScript use versioned filenames. When changing either file, bump its filename and update the references in all three HTML pages so cached copies of the previous version can expire independently.
 
 ## 🚀 Local Development
 
