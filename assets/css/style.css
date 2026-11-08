@@ -122,7 +122,7 @@ pre {
 }
 
 .loader-ascii {
-  font-family: var(--font-mono);
+  font-family: "Courier New", monospace;
   font-size: 0.9rem;
   color: var(--blue);
   line-height: 1.4;
@@ -185,7 +185,7 @@ pre {
 }
 
 .loader-txt {
-  font-family: var(--font-mono);
+  font-family: "Courier New", monospace;
   font-size: 0.78rem;
   color: var(--text-dim);
   letter-spacing: 0.08em;

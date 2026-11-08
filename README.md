@@ -7,6 +7,13 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 
 ---
 
+## v6.0
+
+- Corrected the 2012 debut milestone and the V4 Chinese voicebank names, 萌 (Meng / Normal) and 凝 (Ning / Power).
+- The opening loading screen uses a local monospace font stack to avoid a late webfont swap.
+- The music player reads the track index on page load and requests an MP3 only when playback starts. Track duration appears after its audio metadata loads.
+- Expanded Chinese and English coverage for site labels and messages. Song names and Bilibili posts keep their original wording.
+
 ## ✨ Features
 
 | Feature | Details |
@@ -14,7 +21,7 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 | 🎌 Bilingual | Full Chinese / English toggle, stored in localStorage |
 | 🖥️ Futuristic ASCII UI | All decoration rendered with box-drawing characters |
 | 🎬 Bilibili Videos | Live updates of latest 10 videos via automated crawler |
-| 🎵 Local Music Player | Reads MP3s from `./music/`, parses `<title>-<artist>.mp3` filenames |
+| 🎵 Local Music Player | Reads `music/index.json` to list tracks and loads audio on demand |
 | 📱 Responsive | Portrait (mobile) + Landscape (desktop) optimised layouts |
 | ⚡ Static Frontend | No frameworks, optimized for edge delivery |
 
@@ -49,23 +56,25 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 
 ```bash
 # Serve with Python (required — fetch() needs HTTP, can't open index.html directly)
-python -m http.server 8712 --directory /path/to/120712.com
+python -m http.server 18712 --bind 127.0.0.1 --directory /path/to/120712
 
 # Open browser
-http://localhost:8712
+http://127.0.0.1:18712/
 ```
+
+A fresh checkout does not include the crawler-generated `assets/data/updates.json`. The gallery still shows its bundled character art. Recent gallery images and the video feed require the generated data.
 
 ---
 
 ## 🎵 Adding Music
 
-1. Drop MP3 files into `./music/` using the naming convention:
+1. Drop MP3 files into `./music/` using the `<title>-<artist>.mp3` naming convention. The last example is a track already in the repository.
 
    ```
    曲名-作者名.mp3
    # Examples:
    白鸟过河滩-ilem.mp3
-   天上天下-Wowaka.mp3
+   白石溪-洛天依，乐正绫，Soda纯白.mp3
    ```
 
 2. Regenerate the track index:

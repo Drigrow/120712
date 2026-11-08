@@ -173,7 +173,7 @@
 <body>
 
   <!-- ████ NAVBAR ████ -->
-  <nav class="navbar" id="navbar" aria-label="Main navigation">
+  <nav class="navbar" id="navbar" aria-label="主导航" data-label-zh="主导航" data-label-en="Main navigation">
     <a href="index.html#hero" class="nav-logo">
       <span class="logo-bracket">[ </span>
       <span class="logo-name-zh">洛天依</span>
@@ -189,10 +189,10 @@
       <li><a href="updates.html" class="nav-link active"><span class="nl-idx">06</span><span class="zh">视频</span><span class="en">Videos</span></a></li>
     </ul>
     <div class="nav-right">
-      <button class="lang-toggle" id="langToggle" aria-label="切换语言">
+      <button class="lang-toggle" id="langToggle" aria-label="切换至英文" data-label-zh="切换至英文" data-label-en="Switch to Chinese">
         <span class="lt-zh">中文</span><span class="lt-sep">/</span><span class="lt-en">EN</span>
       </button>
-      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <button class="hamburger" id="hamburger" aria-label="菜单" data-label-zh="菜单" data-label-en="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -213,21 +213,20 @@
         <pre class="sec-ascii" aria-hidden="true">╔══════════════════════════════════════╗
 ║  §06  B站视频动态 · Bilibili Videos  ║
 ╚══════════════════════════════════════╝</pre>
-        <a href="index.html" class="return-link">&lt;&lt; [ RETURN_TO_SYSTEM_ROOT ]</a>
+        <a href="index.html" class="return-link">&lt;&lt; [ <span class="zh">返回首页</span><span class="en">Back to Home</span> ]</a>
       </div>
 
       <div class="crawler-log mono" id="crawlerLog">
-        &gt; INITIALIZING_CRAWLER...<br>
-        &gt; TARGET_ID: LUO_TIANYI (BILIBILI_VIDEOS)<br>
-        &gt; FETCHING_LATEST_VIDEOS_FROM ./assets/data/updates.json ...
+        &gt; <span class="zh">正在加载洛天依的最新 B 站视频…</span><span class="en">Loading Luo Tianyi’s latest Bilibili videos…</span>
       </div>
 
+      <p class="crawler-log mono"><span class="zh">视频标题和动态内容保留发布时的原文。</span><span class="en">Video titles and posts appear in their original language.</span></p>
       <div class="u-feed" id="uFeed">
         <!-- JS inject -->
       </div>
       <!-- Noscript SEO fallback -->
       <noscript>
-        <p style="color:#ccc;font-family:sans-serif;padding:20px">洛天依最新Bilibili视频 | Latest Luo Tianyi Bilibili videos. Please enable JavaScript to view the full feed.</p>
+        <p style="color:#ccc;font-family:sans-serif;padding:20px">请启用 JavaScript 查看洛天依的最新 B 站视频。 / Enable JavaScript to view Luo Tianyi’s latest Bilibili videos.</p>
       </noscript>
     </section>
   </main>
@@ -244,7 +243,7 @@
         const data = await res.json();
         
         setTimeout(() => {
-          log.innerHTML += '<br>&gt; VIDEOS_DETECTED: ' + data.length + '<br>&gt; RENDERING_FEED...';
+          log.insertAdjacentHTML('beforeend', `<br>&gt; <span class="zh">已找到 ${data.length} 条动态，正在显示…</span><span class="en">Updates found: ${data.length}. Loading feed…</span>`);
         }, 600);
         
         setTimeout(() => {
@@ -271,7 +270,7 @@
                          <a href="${item.url}" target="_blank" class="u-video-block">
                              <img src="${cover}" class="u-video-cover" alt="video thumbnail">
                              <div class="u-video-play">▶</div>
-                             <div class="u-video-title" style="font-family:var(--font-sans)">${v.title || 'Video'}</div>
+                             <div class="u-video-title" style="font-family:var(--font-sans)">${v.title || '<span class="zh">视频</span><span class="en">Video</span>'}</div>
                          </a>`;
                     }
                 }
@@ -291,17 +290,17 @@
                 </div>
                 ${mediaHtml}
                 <a href="${item.url}" target="_blank" class="u-link">
-                  &gt;&gt; <span class="zh">查看原文</span><span class="en">Source Link</span>
+                  &gt;&gt; <span class="zh">查看原文</span><span class="en">View Original</span>
                 </a>
               </div>
             `;
             feed.insertAdjacentHTML('beforeend', html);
           });
-          log.innerHTML += '<br>&gt; DONE.';
+          log.insertAdjacentHTML('beforeend', '<br>&gt; <span class="zh">加载完成。</span><span class="en">Feed loaded.</span>');
         }, 1200);
 
       } catch (err) {
-        log.innerHTML += '<br>&gt; CAUTION: FAILED TO FETCH SIGNALS.';
+        log.insertAdjacentHTML('beforeend', '<br>&gt; <span class="zh">暂时无法加载视频动态。</span><span class="en">The video feed is currently unavailable.</span>');
         log.style.color = 'var(--red)';
       }
     })();

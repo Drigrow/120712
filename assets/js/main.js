@@ -56,10 +56,20 @@ try {
   }
 } catch (e) { }
 
+function updateControlLabels() {
+  document.querySelectorAll('[data-label-zh]').forEach(control => {
+    const label = currentLang === 'zh' ? control.dataset.labelZh : control.dataset.labelEn;
+    control.setAttribute('aria-label', label);
+    if (control.hasAttribute('title')) control.title = label;
+  });
+}
+updateControlLabels();
+
 langBtn.addEventListener('click', () => {
   currentLang = currentLang === 'zh' ? 'en' : 'zh';
   html.setAttribute('data-lang', currentLang);
   html.setAttribute('lang', currentLang === 'zh' ? 'zh-Hans' : 'en');
+  updateControlLabels();
   try { localStorage.setItem('lt-lang', currentLang); } catch (e) { }
 });
 
@@ -265,7 +275,7 @@ function renderSongList() {
     row.className = 'song-item';
     row.tabIndex = 0;
     row.setAttribute('role', 'button');
-    row.setAttribute('aria-label', `播放 ${song.title} - ${song.artist}`);
+    row.setAttribute('aria-label', `${song.title} — ${song.artist}`);
     row.dataset.idx = idx;
 
     row.innerHTML = `
@@ -280,22 +290,11 @@ function renderSongList() {
     row.addEventListener('click', () => playSong(idx));
     row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') playSong(idx); });
     songListEl.appendChild(row);
-    probeDuration(song.file, idx);
   });
 }
 
 function escHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function probeDuration(file, idx) {
-  const a = new Audio();
-  a.preload = 'metadata';
-  a.src = MUSIC_DIR + encodeURIComponent(file);
-  a.addEventListener('loadedmetadata', () => {
-    const el = document.getElementById('dur-' + idx);
-    if (el) el.textContent = fmtTime(a.duration);
-  });
 }
 
 /* ── Play a song by index ── */
@@ -326,6 +325,10 @@ function playSong(idx) {
 /* ── Single audio event listeners (attached once) ── */
 audio.addEventListener('play', syncPlayBtn);
 audio.addEventListener('pause', syncPlayBtn);
+audio.addEventListener('loadedmetadata', () => {
+  const duration = document.getElementById('dur-' + currentIdx);
+  if (duration) duration.textContent = fmtTime(audio.duration);
+});
 audio.addEventListener('ended', () => {
   playSong((currentIdx + 1) % playlist.length);
 });
@@ -333,7 +336,7 @@ audio.addEventListener('error', () => {
   pbPlay.textContent = '▶';
   pbPlay.classList.remove('playing');
   pbWave.classList.remove('active');
-  pbTime.textContent = 'ERROR';
+  pbTime.innerHTML = '<span class="zh">播放失败</span><span class="en">Playback failed</span>';
   stopWaveAnim();
 });
 audio.addEventListener('timeupdate', () => {
@@ -343,17 +346,17 @@ audio.addEventListener('timeupdate', () => {
 });
 
 /* ── Play/pause toggle ── */
-pbPlay.addEventListener('click', () => {
+pbPlay?.addEventListener('click', () => {
   if (currentIdx < 0) { if (playlist.length > 0) playSong(0); return; }
   if (audio.paused) audio.play().catch(() => { });
   else audio.pause();
 });
 
-pbPrev.addEventListener('click', () => {
+pbPrev?.addEventListener('click', () => {
   if (playlist.length === 0) return;
   playSong((currentIdx - 1 + playlist.length) % playlist.length);
 });
-pbNext.addEventListener('click', () => {
+pbNext?.addEventListener('click', () => {
   if (playlist.length === 0) return;
   playSong((currentIdx + 1) % playlist.length);
 });
@@ -367,7 +370,7 @@ document.querySelector('.pb-prog-wrap')?.addEventListener('click', e => {
 });
 
 /* ── Volume slider ── */
-pbVolSlider.addEventListener('input', () => {
+pbVolSlider?.addEventListener('input', () => {
   const v = parseInt(pbVolSlider.value) / 100;
   audio.volume = v;
   savedVol = v;
@@ -376,7 +379,7 @@ pbVolSlider.addEventListener('input', () => {
   pbVolIcon.textContent = v === 0 ? '🔇' : v < 0.4 ? '🔉' : '🔊';
 });
 
-pbVolIcon.addEventListener('click', () => {
+pbVolIcon?.addEventListener('click', () => {
   if (isMuted) {
     isMuted = false;
     audio.volume = savedVol || 0.8;
@@ -412,23 +415,24 @@ function stopWaveAnim() {
   pbWave.textContent = '▁'.repeat(40);
 }
 
-/* ── Init: fetch and render ── */
-(async () => {
+/* ── Load track list on page open ── */
+async function loadTrackList() {
   const files = await fetchMusicList();
   playlist = files.map(f => ({ file: f, ...parseFilename(f) }));
   renderSongList();
 
-  // Update header count
-  const header = document.getElementById('playerHeader');
-  if (header && playlist.length > 0) {
-    header.textContent = `┌─── [ LOCAL_MUSIC · 本地曲目 · ${playlist.length} tracks ] ` + '─'.repeat(Math.max(0, 42 - String(playlist.length).length)) + '┐';
+  if (playlist.length > 0) {
+    document.getElementById('trackCountZh').textContent = ` · ${playlist.length} 首`;
+    document.getElementById('trackCountEn').textContent = ` · ${playlist.length} tracks`;
   }
-})();
+}
+if (songListEl) loadTrackList();
 
 /* ════════════════════════════════════════════════
    BIRTHDAY COUNTDOWN — Luo Tianyi (洛天依) · 07/12
    ════════════════════════════════════════════════ */
 (function initBirthdayCountdown() {
+  if (!document.getElementById('bdCountdown')) return;
   const BIRTH_YEAR = 2012;   // Tianyi's launch year
   const BD_MONTH = 7;      // July (1-indexed)
   const BD_DAY = 12;

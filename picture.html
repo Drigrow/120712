@@ -83,7 +83,7 @@
 <body>
 
   <!-- ████ NAVBAR ████ -->
-  <nav class="navbar" id="navbar" aria-label="Main navigation">
+  <nav class="navbar" id="navbar" aria-label="主导航" data-label-zh="主导航" data-label-en="Main navigation">
     <a href="index.html#hero" class="nav-logo">
       <span class="logo-bracket">[ </span>
       <span class="logo-name-zh">洛天依</span>
@@ -99,10 +99,10 @@
       <li><a href="updates.html" class="nav-link"><span class="nl-idx">06</span><span class="zh">动态</span><span class="en">Updates</span></a></li>
     </ul>
     <div class="nav-right">
-      <button class="lang-toggle" id="langToggle" aria-label="切换语言">
+      <button class="lang-toggle" id="langToggle" aria-label="切换至英文" data-label-zh="切换至英文" data-label-en="Switch to Chinese">
         <span class="lt-zh">中文</span><span class="lt-sep">/</span><span class="lt-en">EN</span>
       </button>
-      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <button class="hamburger" id="hamburger" aria-label="菜单" data-label-zh="菜单" data-label-en="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -122,15 +122,16 @@
         <pre class="sec-ascii" aria-hidden="true">╔══════════════════════════════════════╗
 ║  §05  图库档案 · Picture Library     ║
 ╚══════════════════════════════════════╝</pre>
-        <a href="index.html" class="return-link">&lt;&lt; [ RETURN_TO_SYSTEM_ROOT ]</a>
+        <a href="index.html" class="return-link">&lt;&lt; [ <span class="zh">返回首页</span><span class="en">Back to Home</span> ]</a>
       </div>
 
+      <p id="galleryStatus" class="mono" role="status" hidden><span class="zh">暂时无法加载动态图片，以下为站内人设图。</span><span class="en">Recent images are unavailable. Showing local character art.</span></p>
       <div class="gallery-grid" id="galleryGrid">
         <div class="gallery-item">
           <div style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background:var(--bg2);">
-            <span class="mono" style="color:var(--text-dim); opacity:0.5;">[ SCRAPING_LOCAL_DB_... ]</span>
+            <span class="mono" style="color:var(--text-dim); opacity:0.5;">[<span class="zh">正在加载图库…</span><span class="en">Loading gallery…</span>]</span>
           </div>
-          <div class="gallery-label mono">Awaiting Signal</div>
+          <div class="gallery-label mono"><span class="zh">请稍候</span><span class="en">Please wait</span></div>
         </div>
       </div>
     </section>
@@ -139,10 +140,10 @@
   <!-- ████ LIGHTBOX ████ -->
   <div class="lightbox" id="lightbox">
     <div class="lightbox-content">
-      <div class="lightbox-close" id="lightboxClose">[ CLOSE_X ]</div>
+      <div class="lightbox-close" id="lightboxClose">[<span class="zh">关闭</span><span class="en">Close</span> ×]</div>
       <img src="" alt="" class="lightbox-img" id="lightboxImg">
       <div class="lightbox-info">
-        <span id="lightboxLabel"></span>
+        <span id="lightboxLabel"><span class="zh"></span><span class="en"></span></span>
         <span id="lightboxId"></span>
       </div>
     </div>
@@ -152,56 +153,53 @@
   <script>
     (async function fetchGallery() {
       const grid = document.getElementById('galleryGrid');
-      
+      const media = [
+        { url: 'assets/images/lt_main.png', zh: 'V3 角色立绘', en: 'V3 Character Art', id: 'SYS_001', raw: true },
+        { url: 'assets/images/lt_v3.webp', zh: 'V3 人设参考', en: 'V3 Concept Art', id: 'SYS_002', raw: true },
+        { url: 'assets/images/lt_v5_3view.jpg', zh: 'V5 三视图', en: 'V5 Turnaround', id: 'SYS_003', raw: true },
+      ];
+
       try {
         const res = await fetch('assets/data/updates.json');
         if (!res.ok) throw new Error('Data not found');
         const data = await res.json();
-        
-        let allMedia = [];
+
         let counter = 1;
-        
-        // Add hardcoded references first so the gallery isn't empty if scraper fails visually
-        allMedia.push({url: 'assets/images/lt_main.png', label: 'V3 Main', id: 'SYS_001', raw: true});
-        allMedia.push({url: 'assets/images/lt_v3.webp', label: 'V3 Concept', id: 'SYS_002', raw: true});
-        allMedia.push({url: 'assets/images/lt_v5_3view.jpg', label: 'V5 Turnaround', id: 'SYS_003', raw: true});
-
-        data.forEach(item => {
-            if (item.media && item.media.length > 0) {
-                item.media.forEach(m => {
-                    if (m.type === 'image') {
-                        allMedia.push({url: m.url, label: item.author + ' Update', id: 'CRAWL_' + String(counter).padStart(3, '0')});
-                        counter++;
-                    } else if (m.type === 'video') {
-                        allMedia.push({url: m.cover_url, label: 'Video Thumbnail', id: 'CRAWL_' + String(counter).padStart(3, '0')});
-                        counter++;
-                    }
-                });
+        for (const item of data) {
+          for (const entry of item.media || []) {
+            const id = 'CRAWL_' + String(counter).padStart(3, '0');
+            if (entry.type === 'image') {
+              media.push({ url: entry.url, zh: item.author + ' 的动态', en: item.author + ' Update', id });
+            } else if (entry.type === 'video') {
+              media.push({ url: entry.cover_url, zh: '视频封面', en: 'Video Thumbnail', id });
+            } else {
+              continue;
             }
-        });
-        
-        // Render
-        grid.innerHTML = '';
-        allMedia.forEach(m => {
-            let styling = m.raw ? 'style="object-fit: contain; background: #fff;"' : '';
-            grid.insertAdjacentHTML('beforeend', `
-                <div class="gallery-item" onclick="openLightbox('${m.url}', '${m.label}', '${m.id}')">
-                  <img src="${m.url}" alt="${m.id}" class="gallery-img" ${styling} loading="lazy">
-                  <div class="gallery-label mono">[ ${m.id} ] ${m.label}</div>
-                </div>
-            `);
-        });
-
+            counter++;
+          }
+        }
       } catch (err) {
-        console.error("Gallery fetch failed", err);
-        grid.innerHTML = `
-          <div class="gallery-item">
-            <div style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background:var(--bg2); color:var(--red)">
-              <span class="mono">[ FETCH_FAILED ]</span>
-            </div>
-            <div class="gallery-label mono">Error DB</div>
-          </div>
-        `;
+        console.warn('Gallery updates unavailable', err);
+        document.getElementById('galleryStatus').hidden = false;
+      }
+
+      grid.innerHTML = '';
+      for (const item of media) {
+        const card = document.createElement('div');
+        card.className = 'gallery-item';
+        card.innerHTML = '<img class="gallery-img" loading="lazy"><div class="gallery-label mono"><span></span> <span class="zh"></span><span class="en"></span></div>';
+        const img = card.querySelector('img');
+        img.src = item.url;
+        img.alt = item.zh + ' / ' + item.en;
+        if (item.raw) {
+          img.style.objectFit = 'contain';
+          img.style.background = '#fff';
+        }
+        card.querySelector('.gallery-label span').textContent = '[ ' + item.id + ' ]';
+        card.querySelector('.zh').textContent = item.zh;
+        card.querySelector('.en').textContent = item.en;
+        card.addEventListener('click', () => openLightbox(item));
+        grid.appendChild(card);
       }
     })();
 
@@ -223,11 +221,13 @@
         }
     });
 
-    function openLightbox(url, label, id) {
+    function openLightbox(item) {
         if (!lightboxImg) return;
-        lightboxImg.src = url;
-        lightboxLabel.textContent = label;
-        lightboxId.textContent = `[ ${id} ]`;
+        lightboxImg.src = item.url;
+        lightboxImg.alt = item.zh + ' / ' + item.en;
+        lightboxLabel.querySelector('.zh').textContent = item.zh;
+        lightboxLabel.querySelector('.en').textContent = item.en;
+        lightboxId.textContent = `[ ${item.id} ]`;
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden'; // Stop scrolling
     }
