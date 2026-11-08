@@ -44,8 +44,8 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 │   ├── data/
 │   │   ├── updates.json       # Generated metadata for the video feed
 │   │   └── images/            # Downloaded video thumbnails
-│   ├── css/style.v6.0.2.css
-│   ├── js/main.v6.0.2.js
+│   ├── css/style.v6.0.3.css
+│   ├── js/main.v6.0.3.js
 │   └── images/
 └── requirements.txt           # Python dependencies (requests, bilibili-api-python)
 ```

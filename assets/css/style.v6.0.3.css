@@ -112,6 +112,10 @@ pre {
   animation: loader-timeout 0.3s 1.5s forwards;
 }
 
+.skip-home-loader .loader-screen {
+  display: none;
+}
+
 .loader-screen.hide {
   animation: none;
   opacity: 0;

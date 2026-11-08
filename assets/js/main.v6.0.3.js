@@ -5,46 +5,25 @@
 
 /* ─────────── Loader ─────────── */
 const loader = document.getElementById('loader');
-if (loader) {
-  // More robust internal check: compare origins or hostnames
-  let isInternal = false;
-  try {
-    if (document.referrer) {
-      const refUrl = new URL(document.referrer);
-      const currUrl = new URL(window.location.href);
-      
-      // Check if origins match or if hostname is the same (ignoring port/protocol if needed)
-      isInternal = (refUrl.origin === currUrl.origin) || 
-                   (refUrl.hostname === currUrl.hostname);
-    }
-  } catch (e) {
-    // Basic string check if URL parsing fails
-    isInternal = document.referrer && document.referrer.includes(window.location.hostname);
-  }
+if (loader && !document.documentElement.classList.contains('skip-home-loader')) {
+  const loaderBar = document.getElementById('loaderBar');
+  let pct = 0;
+  const barInterval = setInterval(() => {
+    if (!loaderBar) return;
+    pct = Math.min(100, pct + Math.random() * 18);
+    loaderBar.style.width = pct + '%';
+    if (pct === 100) clearInterval(barInterval);
+  }, 100);
 
-  if (isInternal) {
+  const hideLoader = () => {
+    clearInterval(barInterval);
     loader.classList.add('hide');
-    loader.style.display = 'none'; // completely drop from flow
-  } else {
-    const loaderBar = document.getElementById('loaderBar');
-    let pct = 0;
-    const barInterval = setInterval(() => {
-      if (!loaderBar) return;
-      pct += Math.random() * 18;
-      if (pct > 100) pct = 100;
-      loaderBar.style.width = pct + '%';
-      if (pct >= 100) clearInterval(barInterval);
-    }, 100);
-
-    const hideLoader = () => {
-      clearInterval(barInterval);
-      loader.classList.add('hide');
-    };
-    const heroImage = document.querySelector('.char-img');
-    setTimeout(hideLoader, 1500);
-    if (heroImage?.decode) heroImage.decode().then(hideLoader, hideLoader);
-    else hideLoader();
-  }
+  };
+  const heroImage = document.querySelector('.char-img');
+  const heroReady = heroImage?.decode ? heroImage.decode().catch(() => {}) : Promise.resolve();
+  const minimumDisplay = new Promise(resolve => setTimeout(resolve, 1000));
+  Promise.all([heroReady, minimumDisplay]).then(hideLoader);
+  setTimeout(hideLoader, 1500);
 }
 
 /* ─────────── Language toggle ─────────── */
