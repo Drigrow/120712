@@ -1,0 +1,16 @@
+# 洛天依 · Luo Tianyi Fan Site
+
+> 120712.com is an unofficial, non-commercial fan site about Luo Tianyi (洛天依). It features a character profile, music, artwork, and Bilibili updates, with a Simplified Chinese and English interface.
+
+首页收录洛天依的角色档案、背景故事、声库版本和成长历程。网站提供简体中文和英文界面，曲名及 B 站视频和动态保留原文。
+
+## Main pages
+
+- [角色档案、音乐与成长历程 · Character Profile, Music, and Milestones](https://120712.com/)
+- [图库与人设参考 · Gallery and Character Design References](https://120712.com/picture.html)
+- [B 站视频动态 · Bilibili Video Updates](https://120712.com/updates.html)
+
+## Optional
+
+- [站点地图 · Sitemap](https://120712.com/sitemap.xml)
+- [项目源码与许可说明 · Source Repository and Credits](https://github.com/Drigrow/120712)
