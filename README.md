@@ -54,6 +54,8 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 
 The shared CSS and JavaScript use versioned filenames. When changing either file, bump its filename and update the references in all three HTML pages so cached copies of the previous version can expire independently.
 
+When adding or removing a public page, run `python3 scripts/generate_sitemap.py` and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and supports `--check` to detect drift. The language toggle changes the display of the same URL.
+
 ## 🚀 Local Development
 
 ```bash
