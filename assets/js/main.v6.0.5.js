@@ -30,47 +30,66 @@ if (loader && !document.documentElement.classList.contains('skip-home-loader')) 
 const html = document.documentElement;
 const langBtn = document.getElementById('langToggle');
 const pageUrl = new URL(window.location.href);
-const requestedLang = pageUrl.searchParams.get('lang');
-let currentLang = requestedLang === 'en' || requestedLang === 'zh' ? requestedLang : null;
+const langParam = pageUrl.searchParams.get('lang');
+const requestedLang = langParam === 'en' || langParam === 'zh' ? langParam : null;
 
-try {
-  if (currentLang) localStorage.setItem('lt-lang', currentLang);
-  else currentLang = localStorage.getItem('lt-lang') === 'en' ? 'en' : 'zh';
-} catch (e) { }
-currentLang ??= 'zh';
+function saveLanguage(language) {
+  try { localStorage.setItem('lt-lang', language); } catch (e) { }
+}
 
-function applyLanguage() {
-  html.setAttribute('data-lang', currentLang);
-  html.setAttribute('lang', currentLang === 'en' ? 'en' : 'zh-Hans');
+function updateControlLabels(language) {
   document.querySelectorAll('[data-label-zh]').forEach(control => {
-    const label = currentLang === 'zh' ? control.dataset.labelZh : control.dataset.labelEn;
+    const label = language === 'zh' ? control.dataset.labelZh : control.dataset.labelEn;
     control.setAttribute('aria-label', label);
     if (control.hasAttribute('title')) control.title = label;
   });
-
-  // Only the homepage declares indexable language variants.
-  const urlLanguage = pageUrl.searchParams.get('lang') === 'en' ? 'en' : 'zh-Hans';
-  const alternate = document.head.querySelector(`link[rel="alternate"][hreflang="${urlLanguage}"]`);
-  if (alternate) {
-    let canonical = document.head.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      document.head.append(canonical);
-    }
-    canonical.href = alternate.href;
-  }
 }
-applyLanguage();
 
-langBtn.addEventListener('click', () => {
-  currentLang = currentLang === 'zh' ? 'en' : 'zh';
-  if (currentLang === 'en') pageUrl.searchParams.set('lang', 'en');
-  else pageUrl.searchParams.delete('lang');
-  window.history.replaceState(window.history.state, '', pageUrl);
+if (html.hasAttribute('data-home')) {
+  // Each homepage owns its language and canonical in the original HTML.
+  const language = html.dataset.lang;
+  const destination = new URL(langBtn.href);
+  destination.search = pageUrl.search;
+  destination.searchParams.delete('lang');
+  destination.hash = pageUrl.hash;
+  langBtn.href = destination.href;
+
+  if (requestedLang && requestedLang !== language) {
+    window.location.replace(destination.href);
+  } else {
+    saveLanguage(language);
+  }
+  updateControlLabels(language);
+} else {
+  let currentLang = requestedLang;
+  if (!currentLang) {
+    try { currentLang = localStorage.getItem('lt-lang') === 'en' ? 'en' : 'zh'; } catch (e) { }
+    currentLang ??= 'zh';
+  }
+  const homeLinks = Array.from(document.querySelectorAll('a[href="./"], a[href^="./#"]'), link => ({
+    link,
+    hash: link.hash,
+  }));
+
+  function applyLanguage() {
+    html.dataset.lang = currentLang;
+    html.lang = currentLang === 'en' ? 'en' : 'zh-Hans';
+    updateControlLabels(currentLang);
+    const home = currentLang === 'en' ? 'en.html' : './';
+    homeLinks.forEach(({ link, hash }) => { link.href = home + hash; });
+  }
+
   applyLanguage();
-  try { localStorage.setItem('lt-lang', currentLang); } catch (e) { }
-});
+  if (requestedLang) saveLanguage(currentLang);
+  langBtn.addEventListener('click', () => {
+    currentLang = currentLang === 'zh' ? 'en' : 'zh';
+    if (currentLang === 'en') pageUrl.searchParams.set('lang', 'en');
+    else pageUrl.searchParams.delete('lang');
+    window.history.replaceState(window.history.state, '', pageUrl);
+    applyLanguage();
+    saveLanguage(currentLang);
+  });
+}
 
 /* ─────────── Mobile menu ─────────── */
 const hamburger = document.getElementById('hamburger');

@@ -30,7 +30,8 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 ## 🗂️ Project Structure
 
 ```
-├── index.html                 # Main landing page
+├── index.html                 # Chinese homepage and source for en.html
+├── en.html                    # Generated English homepage
 ├── picture.html               # Image gallery / Databank
 ├── updates.html               # Bilibili video updates feed
 ├── generate_music_list.py     # Script: rebuild music/index.json
@@ -45,18 +46,20 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 │   │   ├── updates.json       # Generated metadata for the video feed
 │   │   └── images/            # Downloaded video thumbnails
 │   ├── css/style.v6.0.3.css
-│   ├── js/main.v6.0.4.js
+│   ├── js/main.v6.0.5.js
 │   └── images/
 └── requirements.txt           # Python dependencies (requests, bilibili-api-python)
 ```
 
 ---
 
-The shared CSS and JavaScript use versioned filenames. When changing either file, bump its filename and update the references in all three HTML pages so cached copies of the previous version can expire independently.
+The shared CSS and JavaScript use versioned filenames. When changing either file, bump its filename and update the HTML references so cached copies of the previous version can expire independently.
+
+After editing `index.html`, run `python3 scripts/generate_english_homepage.py` and commit the generated `en.html` alongside it. Use `--check` to verify it matches the source.
 
 After committing changes to a public page, run `python3 scripts/generate_sitemap.py` from a checkout with full Git history and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and the homepage language variants, and supports `--check` to detect drift. It uses the date of the latest commit touching each page's HTML for `lastmod` and omits the date if there is no commit for that file.
 
-Use `/?lang=en` to open the homepage in English or `/?lang=zh` to explicitly select Simplified Chinese. The query parameter takes precedence over the saved language preference, and the language switch updates the shareable URL.
+The Chinese homepage is at `/` and the English homepage is at `/en.html`. Each has a fixed language and canonical in its HTML. The homepage language switch links directly between them. With JavaScript enabled, legacy links such as `/?lang=en` navigate to the corresponding static homepage while preserving other query parameters and the fragment. The gallery and video page still support `?lang=en` and `?lang=zh` and use the saved preference when no language is specified.
 
 ## 🚀 Local Development
 

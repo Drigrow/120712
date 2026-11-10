@@ -51,24 +51,16 @@ def build_sitemap():
         parser.close()
         path = "/" if page.name == "index.html" else f"/{page.name}"
         url = ORIGIN + path
-        if not parser.canonicals and parser.alternates.get("x-default") == url:
-            # The localized homepage shares one HTML file and sets its canonical in JS.
-            variants = dict.fromkeys(parser.alternates.values())
-            alternates = parser.alternates
-        elif parser.canonicals == [url]:
-            variants = [url]
-            alternates = {}
-        else:
+        if parser.canonicals != [url]:
             continue
 
         modified = last_modified(page)
-        for variant in variants:
-            entry = ET.SubElement(urls, "url")
-            ET.SubElement(entry, "loc").text = variant
-            if modified:
-                ET.SubElement(entry, "lastmod").text = modified
-            for language, href in alternates.items():
-                ET.SubElement(entry, f"{{{XHTML}}}link", rel="alternate", hreflang=language, href=href)
+        entry = ET.SubElement(urls, "url")
+        ET.SubElement(entry, "loc").text = url
+        if modified:
+            ET.SubElement(entry, "lastmod").text = modified
+        for language, href in parser.alternates.items():
+            ET.SubElement(entry, f"{{{XHTML}}}link", rel="alternate", hreflang=language, href=href)
 
     ET.indent(urls, space="  ")
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(urls, encoding="unicode") + "\n"

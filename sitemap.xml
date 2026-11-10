@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://120712.com/</loc>
+    <loc>https://120712.com/en.html</loc>
     <lastmod>2026-11-10</lastmod>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://120712.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/en.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://120712.com/" />
   </url>
   <url>
-    <loc>https://120712.com/?lang=en</loc>
+    <loc>https://120712.com/</loc>
     <lastmod>2026-11-10</lastmod>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://120712.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/en.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://120712.com/" />
   </url>
   <url>
