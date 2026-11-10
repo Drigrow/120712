@@ -76,6 +76,14 @@
     .gallery-item:hover .gallery-img {
       transform: scale(1.05);
     }
+    .gallery-bundled {
+      color: inherit;
+      text-decoration: none;
+    }
+    .gallery-bundled .gallery-img {
+      object-fit: contain;
+      background: #fff;
+    }
     .gallery-label {
       position: absolute;
       bottom: 0;
@@ -140,12 +148,18 @@
 
       <p id="galleryStatus" class="mono" role="status" hidden><span class="zh">暂时无法加载动态图片，以下为站内人设图。</span><span class="en">Recent images are unavailable. Showing local character art.</span></p>
       <div class="gallery-grid" id="galleryGrid">
-        <div class="gallery-item">
-          <div style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background:var(--bg2);">
-            <span class="mono" style="color:var(--text-dim); opacity:0.5;">[<span class="zh">正在加载图库…</span><span class="en">Loading gallery…</span>]</span>
-          </div>
-          <div class="gallery-label mono"><span class="zh">请稍候</span><span class="en">Please wait</span></div>
-        </div>
+        <a class="gallery-item gallery-bundled" data-art-id="SYS_001" href="assets/images/lt_main.png">
+          <img class="gallery-img" src="assets/images/lt_main.png" alt="洛天依 V3 角色立绘 / Luo Tianyi V3 character art">
+          <div class="gallery-label mono">[ SYS_001 ] <span class="zh">V3 角色立绘</span><span class="en">V3 Character Art</span></div>
+        </a>
+        <a class="gallery-item gallery-bundled" data-art-id="SYS_002" href="assets/images/lt_v3.webp">
+          <img class="gallery-img" src="assets/images/lt_v3.webp" alt="洛天依 V3 人设参考 / Luo Tianyi V3 concept art">
+          <div class="gallery-label mono">[ SYS_002 ] <span class="zh">V3 人设参考</span><span class="en">V3 Concept Art</span></div>
+        </a>
+        <a class="gallery-item gallery-bundled" data-art-id="SYS_003" href="assets/images/lt_v5_3view.jpg">
+          <img class="gallery-img" src="assets/images/lt_v5_3view.jpg" alt="洛天依 V5 三视图 / Luo Tianyi V5 turnaround">
+          <div class="gallery-label mono">[ SYS_003 ] <span class="zh">V5 三视图</span><span class="en">V5 Turnaround</span></div>
+        </a>
       </div>
     </section>
   </main>
@@ -166,11 +180,7 @@
   <script>
     (async function fetchGallery() {
       const grid = document.getElementById('galleryGrid');
-      const media = [
-        { url: 'assets/images/lt_main.png', zh: 'V3 角色立绘', en: 'V3 Character Art', id: 'SYS_001', raw: true },
-        { url: 'assets/images/lt_v3.webp', zh: 'V3 人设参考', en: 'V3 Concept Art', id: 'SYS_002', raw: true },
-        { url: 'assets/images/lt_v5_3view.jpg', zh: 'V5 三视图', en: 'V5 Turnaround', id: 'SYS_003', raw: true },
-      ];
+      const media = [];
 
       try {
         const res = await fetch('assets/data/updates.json');
@@ -196,7 +206,6 @@
         document.getElementById('galleryStatus').hidden = false;
       }
 
-      grid.innerHTML = '';
       for (const item of media) {
         const card = document.createElement('div');
         card.className = 'gallery-item';
@@ -204,10 +213,6 @@
         const img = card.querySelector('img');
         img.src = item.url;
         img.alt = item.zh + ' / ' + item.en;
-        if (item.raw) {
-          img.style.objectFit = 'contain';
-          img.style.background = '#fff';
-        }
         card.querySelector('.gallery-label span').textContent = '[ ' + item.id + ' ]';
         card.querySelector('.zh').textContent = item.zh;
         card.querySelector('.en').textContent = item.en;
@@ -225,6 +230,19 @@
         lightboxClose = document.getElementById('lightboxClose');
         lightboxLabel = document.getElementById('lightboxLabel');
         lightboxId = document.getElementById('lightboxId');
+
+        document.querySelectorAll('.gallery-bundled').forEach(card => {
+            card.addEventListener('click', event => {
+                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                openLightbox({
+                    url: card.href,
+                    id: card.dataset.artId,
+                    zh: card.querySelector('.zh').textContent,
+                    en: card.querySelector('.en').textContent,
+                });
+            });
+        });
 
         if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
         if (lightbox) {
