@@ -161,6 +161,7 @@ def main():
     # Generate Static HTML Snippet
     snippet_file = os.path.join(ASSETS_DIR, 'updates_snippet.html')
     html_snippet = ""
+    json_ld_videos = []
 
     for item in all_data:
         media_html = ""
@@ -176,6 +177,19 @@ def main():
                     <div class="u-video-title" style="font-family:var(--font-sans)">{v.get('title', 'Video')}</div>
                 </a>"""
         
+        # Build JSON-LD VideoObject
+        if v:
+            json_ld_videos.append({
+                "@context": "https://schema.org",
+                "@type": "VideoObject",
+                "name": v.get('title', item['content']),
+                "description": item['content'],
+                "thumbnailUrl": v.get('cover_url'),
+                "uploadDate": datetime.fromtimestamp(item['timestamp']).isoformat(),
+                "contentUrl": item['url'],
+                "embedUrl": item['url']
+            })
+
         # Build card HTML for ALL items (not just video ones)
         content_html = item['content'].replace('\n', '<br>')
         card_html = f"""
@@ -202,7 +216,60 @@ def main():
     with open(snippet_file, 'w', encoding='utf-8') as f:
         f.write(html_snippet)
 
-    print(f"Done. Saved {len(all_data)} items (JSON, HTML snippet).")
+    # Save JSON-LD
+    schema_file = os.path.join(ASSETS_DIR, 'updates_schema.json')
+    with open(schema_file, 'w', encoding='utf-8') as f:
+        json.dump(json_ld_videos, f, ensure_ascii=False, indent=2)
+
+    # ---------------------------------------------------------
+    # Update updates.html with dynamic Twitter/OG cards
+    # ---------------------------------------------------------
+    updates_file = os.path.join(BASE_DIR, 'updates.html')
+    if os.path.exists(updates_file):
+        try:
+            with open(updates_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            import re
+            
+            # Extract top 3 covers
+            top_covers = []
+            for item in all_data:
+                if item.get('media'):
+                    v = next((m for m in item['media'] if m['type'] == 'video'), None)
+                    if v and v.get('cover_url'):
+                        top_covers.append(v['cover_url'])
+                if len(top_covers) >= 3:
+                     break
+                     
+            if not top_covers:
+                 top_covers = ['assets/images/lt_main.png']
+
+            # Remove existing image tags
+            content = re.sub(r'<meta property="og:image".*?>\n?', '', content)
+            content = re.sub(r'<meta name="twitter:image".*?>\n?', '', content)
+
+            # Build new tags
+            new_tags = ""
+            for cover in top_covers:
+                 # Ensure we use an absolute URL if it's a local path
+                 if cover.startswith(('assets/', 'images/')):
+                     full_url = f"https://120712.com/{cover}"
+                 else:
+                     full_url = cover
+                 new_tags += f'  <meta property="og:image" content="{full_url}" />\n'
+                 new_tags += f'  <meta name="twitter:image" content="{full_url}" />\n'
+
+            # Inject right before the video schema tag to maintain head structure
+            content = content.replace('  <!-- Load VideoObject schema', new_tags + '  <!-- Load VideoObject schema')
+
+            with open(updates_file, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"Injected {len(top_covers)} dynamic meta images into updates.html.")
+        except Exception as e:
+            print(f"Failed to update updates.html meta tags: {e}")
+
+    print(f"Done. Saved {len(all_data)} items (JSON, HTML snippet, Schema).")
 
 if __name__ == '__main__':
     main()
