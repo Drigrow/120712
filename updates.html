@@ -234,6 +234,32 @@
 
   <script src="assets/js/main.v6.0.5.js"></script>
   <script>
+    async function loadVideoSchema(items) {
+      try {
+        const res = await fetch('assets/data/updates_schema.json');
+        if (!res.ok) return;
+        const videos = await res.json();
+        if (!Array.isArray(videos)) return;
+
+        const visibleUrls = new Set(items.filter(item => item.type === 'video').map(item => item.url));
+        const markup = videos
+          .filter(video => video?.['@type'] === 'VideoObject' && visibleUrls.has(video.url || video.contentUrl))
+          .map(({ contentUrl, embedUrl, thumbnailUrl, ...video }) => {
+            const url = video.url || contentUrl;
+            const cover = thumbnailUrl || 'assets/images/lt_v5_3view.jpg';
+            const entry = { ...video, url, thumbnailUrl: new URL(cover, document.baseURI).href };
+
+            // The crawler currently uses the watch-page URL for both fields.
+            if (contentUrl && contentUrl !== url) entry.contentUrl = contentUrl;
+            if (embedUrl && embedUrl !== url) entry.embedUrl = embedUrl;
+            return entry;
+          });
+        document.getElementById('videoSchema').textContent = JSON.stringify(markup);
+      } catch (err) {
+        console.warn('Video structured data unavailable', err);
+      }
+    }
+
     (async function fetchUpdates() {
       const feed = document.getElementById('uFeed');
       const log = document.getElementById('crawlerLog');
@@ -298,6 +324,7 @@
             feed.insertAdjacentHTML('beforeend', html);
           });
           log.insertAdjacentHTML('beforeend', '<br>&gt; <span class="zh">加载完成。</span><span class="en">Feed loaded.</span>');
+          loadVideoSchema(data);
         }, 1200);
 
       } catch (err) {
