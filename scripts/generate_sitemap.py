@@ -9,29 +9,42 @@ from xml.etree import ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 ORIGIN = "https://120712.com"
 NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9"
+XHTML = "http://www.w3.org/1999/xhtml"
+ET.register_namespace("xhtml", XHTML)
 
 
-class CanonicalParser(HTMLParser):
+class PageLinks(HTMLParser):
     def __init__(self):
         super().__init__()
-        self.urls = []
+        self.canonicals = []
+        self.alternates = {}
 
     def handle_starttag(self, tag, attrs):
         if tag == "link":
             attrs = dict(attrs)
-            if "canonical" in (attrs.get("rel") or "").lower().split():
-                self.urls.append(attrs.get("href"))
+            rel = (attrs.get("rel") or "").lower().split()
+            if "canonical" in rel:
+                self.canonicals.append(attrs.get("href"))
+            if "alternate" in rel and attrs.get("hreflang") and attrs.get("href"):
+                self.alternates[attrs["hreflang"]] = attrs["href"]
 
 
 def build_sitemap():
     urls = ET.Element("urlset", xmlns=NAMESPACE)
     for page in sorted(ROOT.glob("*.html")):
-        parser = CanonicalParser()
+        parser = PageLinks()
         parser.feed(page.read_text(encoding="utf-8"))
         parser.close()
         path = "/" if page.name == "index.html" else f"/{page.name}"
         url = ORIGIN + path
-        if parser.urls == [url]:
+        if not parser.canonicals and parser.alternates.get("x-default") == url:
+            # The localized homepage shares one HTML file and sets its canonical in JS.
+            for variant in dict.fromkeys(parser.alternates.values()):
+                entry = ET.SubElement(urls, "url")
+                ET.SubElement(entry, "loc").text = variant
+                for language, href in parser.alternates.items():
+                    ET.SubElement(entry, f"{{{XHTML}}}link", rel="alternate", hreflang=language, href=href)
+        elif parser.canonicals == [url]:
             ET.SubElement(ET.SubElement(urls, "url"), "loc").text = url
 
     ET.indent(urls, space="  ")

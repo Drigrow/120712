@@ -45,7 +45,7 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 │   │   ├── updates.json       # Generated metadata for the video feed
 │   │   └── images/            # Downloaded video thumbnails
 │   ├── css/style.v6.0.3.css
-│   ├── js/main.v6.0.3.js
+│   ├── js/main.v6.0.4.js
 │   └── images/
 └── requirements.txt           # Python dependencies (requests, bilibili-api-python)
 ```
@@ -54,7 +54,9 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 
 The shared CSS and JavaScript use versioned filenames. When changing either file, bump its filename and update the references in all three HTML pages so cached copies of the previous version can expire independently.
 
-When adding or removing a public page, run `python3 scripts/generate_sitemap.py` and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and supports `--check` to detect drift. The language toggle changes the display of the same URL.
+When adding or removing a public page, run `python3 scripts/generate_sitemap.py` and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and the homepage language variants, and supports `--check` to detect drift.
+
+Use `/?lang=en` to open the homepage in English or `/?lang=zh` to explicitly select Simplified Chinese. The query parameter takes precedence over the saved language preference, and the language switch updates the shareable URL.
 
 ## 🚀 Local Development
 

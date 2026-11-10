@@ -29,31 +29,46 @@ if (loader && !document.documentElement.classList.contains('skip-home-loader')) 
 /* ─────────── Language toggle ─────────── */
 const html = document.documentElement;
 const langBtn = document.getElementById('langToggle');
-let currentLang = 'zh';
+const pageUrl = new URL(window.location.href);
+const requestedLang = pageUrl.searchParams.get('lang');
+let currentLang = requestedLang === 'en' || requestedLang === 'zh' ? requestedLang : null;
 
 try {
-  const saved = localStorage.getItem('lt-lang');
-  if (saved === 'en') {
-    currentLang = 'en';
-    html.setAttribute('data-lang', 'en');
-    html.setAttribute('lang', 'en');
-  }
+  if (currentLang) localStorage.setItem('lt-lang', currentLang);
+  else currentLang = localStorage.getItem('lt-lang') === 'en' ? 'en' : 'zh';
 } catch (e) { }
+currentLang ??= 'zh';
 
-function updateControlLabels() {
+function applyLanguage() {
+  html.setAttribute('data-lang', currentLang);
+  html.setAttribute('lang', currentLang === 'en' ? 'en' : 'zh-Hans');
   document.querySelectorAll('[data-label-zh]').forEach(control => {
     const label = currentLang === 'zh' ? control.dataset.labelZh : control.dataset.labelEn;
     control.setAttribute('aria-label', label);
     if (control.hasAttribute('title')) control.title = label;
   });
+
+  // Only the homepage declares indexable language variants.
+  const urlLanguage = pageUrl.searchParams.get('lang') === 'en' ? 'en' : 'zh-Hans';
+  const alternate = document.head.querySelector(`link[rel="alternate"][hreflang="${urlLanguage}"]`);
+  if (alternate) {
+    let canonical = document.head.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.append(canonical);
+    }
+    canonical.href = alternate.href;
+  }
 }
-updateControlLabels();
+applyLanguage();
 
 langBtn.addEventListener('click', () => {
   currentLang = currentLang === 'zh' ? 'en' : 'zh';
-  html.setAttribute('data-lang', currentLang);
-  html.setAttribute('lang', currentLang === 'zh' ? 'zh-Hans' : 'en');
-  updateControlLabels();
+  if (currentLang === 'en') pageUrl.searchParams.set('lang', 'en');
+  else pageUrl.searchParams.delete('lang');
+  window.history.replaceState(window.history.state, '', pageUrl);
+  applyLanguage();
   try { localStorage.setItem('lt-lang', currentLang); } catch (e) { }
 });
 
