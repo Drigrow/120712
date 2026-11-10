@@ -46,7 +46,7 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 │   │   ├── updates.json       # Generated metadata for the video feed
 │   │   └── images/            # Downloaded video thumbnails
 │   ├── css/style.v6.0.3.css
-│   ├── js/main.v6.0.5.js
+│   ├── js/main.v6.0.6.js
 │   └── images/
 └── requirements.txt           # Python dependencies (requests, bilibili-api-python)
 ```
@@ -59,7 +59,7 @@ After editing `index.html`, run `python3 scripts/generate_english_homepage.py` a
 
 After committing changes to a public page, run `python3 scripts/generate_sitemap.py` from a checkout with full Git history and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and the homepage language variants, and supports `--check` to detect drift. It uses the date of the latest commit touching each page's HTML for `lastmod` and omits the date if there is no commit for that file.
 
-The Chinese homepage is at `/` and the English homepage is at `/en.html`. Each has a fixed language and canonical in its HTML. The homepage language switch links directly between them. With JavaScript enabled, legacy links such as `/?lang=en` navigate to the corresponding static homepage while preserving other query parameters and the fragment. The gallery and video page still support `?lang=en` and `?lang=zh` and use the saved preference when no language is specified.
+The Chinese homepage is at `/` and the English homepage is at `/en.html`. Each has a fixed language and canonical in its HTML. The homepage language link switches in place with JavaScript and uses normal navigation without it. Legacy links such as `/?lang=en` still navigate to the corresponding static homepage while preserving other query parameters and the fragment. The gallery and video page still support `?lang=en` and `?lang=zh` and use the saved preference when no language is specified.
 
 ## 🚀 Local Development
 

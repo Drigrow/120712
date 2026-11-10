@@ -47,19 +47,138 @@ function updateControlLabels(language) {
 
 if (html.hasAttribute('data-home')) {
   // Each homepage owns its language and canonical in the original HTML.
-  const language = html.dataset.lang;
-  const destination = new URL(langBtn.href);
-  destination.search = pageUrl.search;
-  destination.searchParams.delete('lang');
-  destination.hash = pageUrl.hash;
-  langBtn.href = destination.href;
+  let language = html.dataset.lang;
+  const canonical = document.head.querySelector('link[rel="canonical"]');
+  const schema = document.head.querySelector('script[type="application/ld+json"]');
+  const metaSelector = 'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"]';
+  const metaKey = tag => tag.getAttribute('name') || tag.getAttribute('property');
+  const homeMeta = [...document.head.querySelectorAll(metaSelector)];
+  const contentLinks = document.querySelectorAll('a[href^="picture.html"], a[href^="updates.html"]');
+  const versions = new Map();
+  let switching = false;
+
+  function alternateHome() {
+    const target = language === 'zh' ? 'en' : 'zh';
+    const hreflang = target === 'en' ? 'en' : 'zh-Hans';
+    const current = new URL(window.location.href);
+    const destination = new URL(target === 'en' ? 'en.html' : './', current);
+    destination.search = current.search;
+    destination.searchParams.delete('lang');
+    destination.hash = current.hash;
+    return { target, hreflang, destination };
+  }
+
+  function readHomeVersion(doc) {
+    return {
+      language: doc.documentElement.dataset.lang,
+      lang: doc.documentElement.lang,
+      title: doc.title,
+      canonical: doc.head.querySelector('link[rel="canonical"]').getAttribute('href'),
+      schema: doc.head.querySelector('script[type="application/ld+json"]').textContent,
+      metadata: new Map([...doc.head.querySelectorAll(metaSelector)].map(tag => [metaKey(tag), tag.content])),
+    };
+  }
+
+  function loadHomeVersion({ target, hreflang, destination }) {
+    if (!versions.has(target)) {
+      const source = new URL(destination);
+      source.search = '';
+      source.hash = '';
+      const expected = document.head.querySelector(`link[rel="alternate"][hreflang="${hreflang}"]`).href;
+      const request = fetch(source).then(async res => {
+        if (!res.ok) throw new Error('Localized homepage unavailable');
+        const text = await res.text();
+        const end = text.indexOf('</head>');
+        if (end < 0) throw new Error('Localized homepage metadata unavailable');
+        const doc = new DOMParser().parseFromString(text.slice(0, end + 7), 'text/html');
+        const version = readHomeVersion(doc);
+        if (version.language !== target || version.lang !== hreflang || version.canonical !== expected) {
+          throw new Error('Unexpected localized homepage');
+        }
+        return version;
+      }).catch(err => {
+        versions.delete(target);
+        throw err;
+      });
+      versions.set(target, request);
+    }
+    return versions.get(target);
+  }
+
+  function updateHomeLinks() {
+    const { hreflang, destination } = alternateHome();
+    langBtn.href = destination.href;
+    langBtn.hreflang = hreflang;
+    contentLinks.forEach(link => {
+      const url = new URL(link.href);
+      if (language === 'en') url.searchParams.set('lang', 'en');
+      else url.searchParams.delete('lang');
+      link.href = url.href;
+    });
+  }
+
+  function readingAnchor() {
+    if (!window.scrollY) return null;
+    const readingLine = document.getElementById('navbar').getBoundingClientRect().bottom + 12;
+    let anchor = null;
+    for (const element of document.querySelectorAll('main section, main .ascii-card, main .tl-item, footer')) {
+      const { top, bottom } = element.getBoundingClientRect();
+      if (top <= readingLine && bottom > readingLine) anchor = { element, top };
+    }
+    return anchor;
+  }
+
+  function applyHomeVersion(version, destination) {
+    const anchor = readingAnchor();
+    window.history.replaceState(window.history.state, '', destination);
+    language = version.language;
+    html.dataset.lang = language;
+    html.lang = version.lang;
+    document.title = version.title;
+    canonical.href = version.canonical;
+    schema.textContent = version.schema;
+    homeMeta.forEach(tag => { tag.content = version.metadata.get(metaKey(tag)) ?? tag.content; });
+    updateControlLabels(language);
+    updateHomeLinks();
+    saveLanguage(language);
+    if (anchor) {
+      window.scrollBy({
+        top: anchor.element.getBoundingClientRect().top - anchor.top,
+        behavior: 'instant',
+      });
+    }
+  }
 
   if (requestedLang && requestedLang !== language) {
-    window.location.replace(destination.href);
+    window.location.replace(alternateHome().destination.href);
   } else {
+    versions.set(language, Promise.resolve(readHomeVersion(document)));
+    updateHomeLinks();
     saveLanguage(language);
+    updateControlLabels(language);
+
+    const warmAlternate = () => { loadHomeVersion(alternateHome()).catch(() => {}); };
+    langBtn.addEventListener('pointerenter', warmAlternate);
+    langBtn.addEventListener('focus', warmAlternate);
+    window.addEventListener('hashchange', updateHomeLinks);
+    langBtn.addEventListener('click', async event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      if (switching) return;
+      switching = true;
+      const alternate = alternateHome();
+      let destination = alternate.destination;
+      try {
+        const version = await loadHomeVersion(alternate);
+        destination = alternateHome().destination;
+        applyHomeVersion(version, destination);
+      } catch (err) {
+        window.location.assign(destination.href);
+      } finally {
+        switching = false;
+      }
+    });
   }
-  updateControlLabels(language);
 } else {
   let currentLang = requestedLang;
   if (!currentLang) {
