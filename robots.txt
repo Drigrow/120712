@@ -8,26 +8,31 @@ User-agent: Googlebot
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: Bingbot
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: Baiduspider
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: Sogou web spider
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: Yandex
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 
 
@@ -37,32 +42,38 @@ User-agent: OAI-SearchBot
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: Claude-SearchBot
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: Claude-User
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 # Google Gemini — Allow grounding and training
 User-agent: Google-Extended
 Allow: /
 Disallow: /backup/
 Disallow: /music/
+Disallow: /*.py$
 
 # AI model training — Block
 
