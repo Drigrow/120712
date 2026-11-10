@@ -1,6 +1,7 @@
 """List the canonical, public HTML pages served from the site root."""
 
 import argparse
+import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -29,6 +30,19 @@ class PageLinks(HTMLParser):
                 self.alternates[attrs["hreflang"]] = attrs["href"]
 
 
+def last_modified(page):
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cs", "--", page.name],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+    except FileNotFoundError:
+        return None
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
 def build_sitemap():
     urls = ET.Element("urlset", xmlns=NAMESPACE)
     for page in sorted(ROOT.glob("*.html")):
@@ -39,13 +53,22 @@ def build_sitemap():
         url = ORIGIN + path
         if not parser.canonicals and parser.alternates.get("x-default") == url:
             # The localized homepage shares one HTML file and sets its canonical in JS.
-            for variant in dict.fromkeys(parser.alternates.values()):
-                entry = ET.SubElement(urls, "url")
-                ET.SubElement(entry, "loc").text = variant
-                for language, href in parser.alternates.items():
-                    ET.SubElement(entry, f"{{{XHTML}}}link", rel="alternate", hreflang=language, href=href)
+            variants = dict.fromkeys(parser.alternates.values())
+            alternates = parser.alternates
         elif parser.canonicals == [url]:
-            ET.SubElement(ET.SubElement(urls, "url"), "loc").text = url
+            variants = [url]
+            alternates = {}
+        else:
+            continue
+
+        modified = last_modified(page)
+        for variant in variants:
+            entry = ET.SubElement(urls, "url")
+            ET.SubElement(entry, "loc").text = variant
+            if modified:
+                ET.SubElement(entry, "lastmod").text = modified
+            for language, href in alternates.items():
+                ET.SubElement(entry, f"{{{XHTML}}}link", rel="alternate", hreflang=language, href=href)
 
     ET.indent(urls, space="  ")
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(urls, encoding="unicode") + "\n"

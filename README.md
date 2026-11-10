@@ -54,7 +54,7 @@ A bilingual (简体中文 / English) futuristic fan-tribute profile page for **L
 
 The shared CSS and JavaScript use versioned filenames. When changing either file, bump its filename and update the references in all three HTML pages so cached copies of the previous version can expire independently.
 
-When adding or removing a public page, run `python3 scripts/generate_sitemap.py` and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and the homepage language variants, and supports `--check` to detect drift.
+After committing changes to a public page, run `python3 scripts/generate_sitemap.py` from a checkout with full Git history and commit the updated `sitemap.xml`. The generator includes root HTML pages with a self-referencing canonical and the homepage language variants, and supports `--check` to detect drift. It uses the date of the latest commit touching each page's HTML for `lastmod` and omits the date if there is no commit for that file.
 
 Use `/?lang=en` to open the homepage in English or `/?lang=zh` to explicitly select Simplified Chinese. The query parameter takes precedence over the saved language preference, and the language switch updates the shareable URL.
 

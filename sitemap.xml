@@ -2,20 +2,24 @@
 <urlset xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://120712.com/</loc>
+    <lastmod>2026-11-10</lastmod>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://120712.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/?lang=en" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://120712.com/" />
   </url>
   <url>
     <loc>https://120712.com/?lang=en</loc>
+    <lastmod>2026-11-10</lastmod>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://120712.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://120712.com/?lang=en" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://120712.com/" />
   </url>
   <url>
     <loc>https://120712.com/picture.html</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
   <url>
     <loc>https://120712.com/updates.html</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
 </urlset>
